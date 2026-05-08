@@ -1,0 +1,90 @@
+
+vllm-mlx serve --help
+#
+#  ---------- Return ----------
+#
+usage: vllm-mlx serve [-h] [--host HOST] [--port PORT] [--max-num-seqs MAX_NUM_SEQS] [--prefill-batch-size PREFILL_BATCH_SIZE]
+                      [--completion-batch-size COMPLETION_BATCH_SIZE] [--enable-prefix-cache] [--disable-prefix-cache]
+                      [--prefix-cache-size PREFIX_CACHE_SIZE] [--cache-memory-mb CACHE_MEMORY_MB] [--cache-memory-percent CACHE_MEMORY_PERCENT]
+                      [--no-memory-aware-cache] [--kv-cache-quantization] [--kv-cache-quantization-bits {4,8}]
+                      [--kv-cache-quantization-group-size KV_CACHE_QUANTIZATION_GROUP_SIZE] [--kv-cache-min-quantize-tokens KV_CACHE_MIN_QUANTIZE_TOKENS]
+                      [--stream-interval STREAM_INTERVAL] [--max-tokens MAX_TOKENS] [--continuous-batching] [--use-paged-cache]
+                      [--paged-cache-block-size PAGED_CACHE_BLOCK_SIZE] [--max-cache-blocks MAX_CACHE_BLOCKS]
+                      [--chunked-prefill-tokens CHUNKED_PREFILL_TOKENS] [--enable-mtp] [--mtp-num-draft-tokens MTP_NUM_DRAFT_TOKENS] [--mtp-optimistic]
+                      [--mcp-config MCP_CONFIG] [--api-key API_KEY] [--rate-limit RATE_LIMIT] [--timeout TIMEOUT] [--enable-auto-tool-choice]
+                      [--tool-call-parser {auto,mistral,qwen,qwen3_coder,llama,hermes,deepseek,kimi,granite,nemotron,xlam,functionary,glm47}]
+                      [--reasoning-parser {qwen3,deepseek_r1,gpt_oss,harmony}] [--mllm] [--default-temperature DEFAULT_TEMPERATURE]
+                      [--default-top-p DEFAULT_TOP_P] [--embedding-model EMBEDDING_MODEL]
+                      model
+
+positional arguments:
+  model                 Model to serve
+
+options:
+  -h, --help            show this help message and exit
+  --host HOST           Host to bind
+  --port PORT           Port to bind
+  --max-num-seqs MAX_NUM_SEQS
+                        Max concurrent sequences
+  --prefill-batch-size PREFILL_BATCH_SIZE
+                        Prefill batch size
+  --completion-batch-size COMPLETION_BATCH_SIZE
+                        Completion batch size
+  --enable-prefix-cache
+                        Enable prefix caching for repeated prompts (default: enabled)
+  --disable-prefix-cache
+                        Disable prefix caching
+  --prefix-cache-size PREFIX_CACHE_SIZE
+                        Max entries in prefix cache (default: 100, legacy mode only)
+  --cache-memory-mb CACHE_MEMORY_MB
+                        Cache memory limit in MB (default: auto-detect ~20% of RAM)
+  --cache-memory-percent CACHE_MEMORY_PERCENT
+                        Fraction of available RAM for cache if auto-detecting (default: 0.20)
+  --no-memory-aware-cache
+                        Disable memory-aware cache, use legacy entry-count based cache
+  --kv-cache-quantization
+                        Quantize stored KV caches to reduce memory (8-bit by default)
+  --kv-cache-quantization-bits {4,8}
+                        Bit width for KV cache quantization (default: 8)
+  --kv-cache-quantization-group-size KV_CACHE_QUANTIZATION_GROUP_SIZE
+                        Group size for KV cache quantization (default: 64)
+  --kv-cache-min-quantize-tokens KV_CACHE_MIN_QUANTIZE_TOKENS
+                        Minimum tokens for quantization to apply (default: 256)
+  --stream-interval STREAM_INTERVAL
+                        Tokens to batch before streaming (1=smooth, higher=throughput)
+  --max-tokens MAX_TOKENS
+                        Default max tokens for generation (default: 32768)
+  --continuous-batching
+                        Enable continuous batching for multiple concurrent users (slower for single user)
+  --use-paged-cache     Use paged KV cache for memory efficiency (experimental)
+  --paged-cache-block-size PAGED_CACHE_BLOCK_SIZE
+                        Tokens per cache block (default: 64)
+  --max-cache-blocks MAX_CACHE_BLOCKS
+                        Maximum number of cache blocks (default: 1000)
+  --chunked-prefill-tokens CHUNKED_PREFILL_TOKENS
+                        Max prefill tokens per scheduler step (0=disabled). Prevents starvation of active requests during long prefills.
+  --enable-mtp          Enable MTP (Multi-Token Prediction) for models with built-in MTP heads. Uses cache snapshot/restore for speculative generation.
+  --mtp-num-draft-tokens MTP_NUM_DRAFT_TOKENS
+                        Number of draft tokens per MTP step (default: 1)
+  --mtp-optimistic      Skip MTP acceptance check for maximum speed. ~5-10% wrong tokens. Best for chat, not for code.
+  --mcp-config MCP_CONFIG
+                        Path to MCP configuration file (JSON/YAML) for tool integration
+  --api-key API_KEY     API key for authentication (if not set, no auth required)
+  --rate-limit RATE_LIMIT
+                        Rate limit requests per minute per client (0 = disabled)
+  --timeout TIMEOUT     Default request timeout in seconds (default: 300)
+  --enable-auto-tool-choice
+                        Enable auto tool choice for supported models. Use --tool-call-parser to specify which parser to use.
+  --tool-call-parser {auto,mistral,qwen,qwen3_coder,llama,hermes,deepseek,kimi,granite,nemotron,xlam,functionary,glm47}
+                        Select the tool call parser for the model. Options: auto (auto-detect), mistral, qwen, qwen3_coder, llama, hermes, deepseek, kimi,
+                        granite, nemotron, xlam, functionary, glm47. Required for --enable-auto-tool-choice.
+  --reasoning-parser {qwen3,deepseek_r1,gpt_oss,harmony}
+                        Enable reasoning content extraction with specified parser. Extracts <think>...</think> tags into reasoning_content field. Options:
+                        qwen3, deepseek_r1, gpt_oss, harmony.
+  --mllm                Force load model as multimodal (vision) even if name doesn't match auto-detection patterns
+  --default-temperature DEFAULT_TEMPERATURE
+                        Override default temperature for all requests (default: use model default)
+  --default-top-p DEFAULT_TOP_P
+                        Override default top_p for all requests (default: use model default)
+  --embedding-model EMBEDDING_MODEL
+                        Pre-load an embedding model at startup (e.g. mlx-community/embeddinggemma-300m-6bit)
